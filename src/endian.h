@@ -30,23 +30,42 @@
   #include <sys/types.h>
   #include <sys/endian.h>
 #elif defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
-  #include <winsock2.h>
+
+  #define SwapTwoBytes(data) \
+  ( (((data) >> 8) & 0x00FF) | \
+    (((data) << 8) & 0xFF00) )
+
+  #define SwapFourBytes(data)   \
+  ( (((data) >> 24) & 0x000000FF) | \
+    (((data) >>  8) & 0x0000FF00) | \
+    (((data) <<  8) & 0x00FF0000) | \
+    (((data) << 24) & 0xFF000000) )
+
+  #define SwapEightBytes(data)   \
+  ( (((data) >> 56) & 0x00000000000000FF) | \
+    (((data) >> 40) & 0x000000000000FF00) | \
+    (((data) >> 24) & 0x0000000000FF0000) | \
+    (((data) >>  8) & 0x00000000FF000000) | \
+    (((data) <<  8) & 0x000000FF00000000) | \
+    (((data) << 24) & 0x0000FF0000000000) | \
+    (((data) << 40) & 0x00FF000000000000) | \
+    (((data) << 56) & 0xFF00000000000000) )
 
   #if BYTE_ORDER == LITTLE_ENDIAN
 
-    #define htobe16(x) htons(x)
+    #define htobe16(x) SwapTwoBytes(x)
     #define htole16(x) (x)
-    #define be16toh(x) ntohs(x)
+    #define be16toh(x) SwapTwoBytes(x)
     #define le16toh(x) (x)
 
-    #define htobe32(x) htonl(x)
+    #define htobe32(x) SwapFourBytes(x)
     #define htole32(x) (x)
-    #define be32toh(x) ntohl(x)
+    #define be32toh(x) SwapFourBytes(x)
     #define le32toh(x) (x)
 
-    #define htobe64(x) htonll(x)
+    #define htobe64(x) SwapEightBytes(x)
     #define htole64(x) (x)
-    #define be64toh(x) ntohll(x)
+    #define be64toh(x) SwapEightBytes(x)
     #define le64toh(x) (x)
 
   #elif BYTE_ORDER == BIG_ENDIAN
