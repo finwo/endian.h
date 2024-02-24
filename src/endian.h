@@ -9,12 +9,12 @@
   #define htole16(x) OSSwapHostToLittleInt16(x)
   #define be16toh(x) OSSwapBigToHostInt16(x)
   #define le16toh(x) OSSwapLittleToHostInt16(x)
-  
+
   #define htobe32(x) OSSwapHostToBigInt32(x)
   #define htole32(x) OSSwapHostToLittleInt32(x)
   #define be32toh(x) OSSwapBigToHostInt32(x)
   #define le32toh(x) OSSwapLittleToHostInt32(x)
-  
+
   #define htobe64(x) OSSwapHostToBigInt64(x)
   #define htole64(x) OSSwapHostToLittleInt64(x)
   #define be64toh(x) OSSwapBigToHostInt64(x)
@@ -29,6 +29,54 @@
 #elif defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_NETBSD) || defined(OS_DRAGONFLYBSD)
   #include <sys/types.h>
   #include <sys/endian.h>
+#elif defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__)
+  #include <winsock2.h>
+  #include <sys/param.h>
+
+  #if BYTE_ORDER == LITTLE_ENDIAN
+
+    #define htobe16(x) htons(x)
+    #define htole16(x) (x)
+    #define be16toh(x) ntohs(x)
+    #define le16toh(x) (x)
+
+    #define htobe32(x) htonl(x)
+    #define htole32(x) (x)
+    #define be32toh(x) ntohl(x)
+    #define le32toh(x) (x)
+
+    #define htobe64(x) htonll(x)
+    #define htole64(x) (x)
+    #define be64toh(x) ntohll(x)
+    #define le64toh(x) (x)
+
+  #elif BYTE_ORDER == BIG_ENDIAN
+
+    /* that would be xbox 360 */
+    #define htobe16(x) (x)
+    #define htole16(x) __builtin_bswap16(x)
+    #define be16toh(x) (x)
+    #define le16toh(x) __builtin_bswap16(x)
+
+    #define htobe32(x) (x)
+    #define htole32(x) __builtin_bswap32(x)
+    #define be32toh(x) (x)
+    #define le32toh(x) __builtin_bswap32(x)
+
+    #define htobe64(x) (x)
+    #define htole64(x) __builtin_bswap64(x)
+    #define be64toh(x) (x)
+    #define le64toh(x) __builtin_bswap64(x)
+
+  #else
+    #error byte order not supported
+  #endif
+
+  #define __BYTE_ORDER    BYTE_ORDER
+  #define __BIG_ENDIAN    BIG_ENDIAN
+  #define __LITTLE_ENDIAN LITTLE_ENDIAN
+  #define __PDP_ENDIAN    PDP_ENDIAN
+
 #else
   #include <endian.h>
 #endif
