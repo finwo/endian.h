@@ -3,6 +3,15 @@ endian.h
 
 Basic handling of endianness between host and known orientations
 
+This library makes use of [dep][dep] to manage it's
+dependencies and exports.
+
+Installation
+------------
+
+This package is in the [main repository][dep-repo] for the dep package manager,
+so you should be able to install it using `dep add finwo/endian`
+
 API
 ---
 
@@ -35,3 +44,6 @@ htole(x)
 betoh(x)
 letoh(x)
 ```
+
+[dep]: https://github.com/finwo/dep
+[dep-repo]: https://github.com/finwo/dep-repository
